@@ -1,0 +1,58 @@
+.breadcrumb {
+  padding: 0 10px 0 15px;
+  margin: 15px 10px 15px 50px;
+  background-color:@transparent;
+  border-left: 1px solid lighten(@text-color, 30%);
+  border-radius:0;
+  li.active {.text-primary;}
+  li + li:before {color: lighten(@text-color, 30%)}
+}
+
+.box-shadow {box-shadow:none;}
+
+.form-control{
+&:focus{
+    border-color: @brand-secondary;
+  }
+} 
+
+input.form-control{
+&:focus + .input-group-btn .btn{
+	color: @brand-secondary !important;
+    border-color: @brand-secondary;
+  }
+} 
+
+.input-group-btn .btn.btn-default:focus {
+	color: @brand-secondary !important;
+    border-color: @brand-secondary;
+  }
+
+.navi ul.nav li a {margin-bottom: 1px;}
+
+.nav > li > a:hover, .nav > li > a:focus {background-color:@brand-secondary;color:@brand-light;}
+
+.navi ul.nav li.active a,.navi ul.nav li.active a {background-color:@brand-secondary;color:@brand-light;}
+.navi ul.nav li.active a i,.navi ul.nav li.active a i {color:@brand-light;}
+
+.navi ul.nav li a:hover > span,.navi ul.nav li a:focus > span,
+.navi ul.nav li a:hover > i,.navi ul.nav li a:focus > i {color:@brand-light;}
+
+.btn-default:hover,
+.btn-default:focus,
+.btn-default:active,
+.btn-default.active,
+.open .dropdown-toggle.btn-default {background:@brand-light !important; color:@brand-primary !important;}
+
+.btn-addon.btn-sm i{margin: -5px -10px;width: 30px;height: 32px;line-height: 32px;margin-right: 0;}
+.btn-addon i{background-color:@transparent;}
+
+.form-control,
+.btn-lg,
+.btn-group-lg > .btn,
+.btn-sm,
+.btn-group-sm > .btn,
+.btn-xs,
+.btn-group-xs > .btn {
+  font-size: 15px;
+}
