@@ -1,0 +1,398 @@
+Table(Schema)
+--------------
+
+Table Name: Asserts
+
+Columns: auid <character>
+
+
+Table Name: Location
+
+Columns: 	auid <characters>
+			x <int>
+			y <int>
+			z <int>
+			time <Datetime>
+
+
+Table Name: Receiver 
+
+Columns:	receiverId <characters>
+			x <int>
+			y <int>
+			z <int>
+			zoneId <characters>
+
+
+Table Name: Task
+
+Columns: 	auid <characters>
+			asid <characters>
+			route <array>
+			endtime <Datetime>
+			starttime <Datetime>
+
+
+Table Name: Zone
+
+Columns: 	zoneId <characters>
+			name <characters>
+
+
+
+Table Name: RawData
+
+Columns: 	auid <characters>
+			receiver <Array>
+			rssi <Array>
+			pi <Array>
+			time <Datetime>
+
+
+
+APIs
+-------
+
+1. POST /tags/location/
+
+Input:
+{ 
+	auid: XXXX, 
+	Recievers : [ {R1i, R2i , R3i} ] , 
+	Rssi : [ {-56, -78 , -76 }] ,
+	Pi :1
+}
+
+Response: 201 Created
+{ 
+	auid: XXXX, 
+	Recievers : [ {R1i, R2i , R3i} ] , 
+	Rssi : [ {-56, -78 , -76 }] ,
+	Pi :1
+	locationId: xxx
+}
+
+2. GET /tags/location/
+
+Response: 
+[
+	{ 
+		auid: XXXX, 
+		x : 1, 
+		y : 1,
+		z : 1
+		time: xxx
+	},
+	{ 
+		auid: XXXX, 
+		x : 1, 
+		y : 1,
+		z : 1
+		time: xxx
+	},
+	...
+]
+
+
+3. GET /tags/<tag_id>/history/
+
+Response:
+[
+	{
+		timestamp: xx
+		location: xxx
+	},{
+		timestamp: xx
+		location: xxx
+	},
+	...
+]
+
+
+4. GET /tags/<tag_id>/current_location/
+
+Response:
+{ 
+	auid: XXXX, 
+	x : 1, 
+	y : 1,
+	z : 1
+	time: xxx
+}
+	
+5. POST /tags/
+
+Input:
+{
+	auid: xxx,
+	asid: xxx,
+	start_time: xx,
+	end_time: xx,
+	routes: []
+}
+
+Response: 201 Created
+{
+	auid: xxx,
+	asid: xxx,
+	start_time: xx,
+	end_time: xx,
+	routes: [],
+	taskid: xxx
+}
+
+6. GET /tags/
+[
+	{
+		auid: xxx,
+		asid: xxx,
+		start_time: xx,
+		end_time: xx,
+		routes: [],
+		taskid: xxx
+	},{
+		auid: xxx,
+		asid: xxx,
+		start_time: xx,
+		end_time: xx,
+		routes: [],
+		taskid: xxx
+	},
+	...
+
+]
+	
+7. POST /receivers/
+Input:
+{
+	receiver_id: xx
+	x: x,
+	y: x,
+	z: x,
+	zone_id: xx
+}
+
+Response: 201 Created
+{
+	receiver_id: xx
+	x: x,
+	y: x,
+	z: x,
+	zone_id: xx
+}
+
+8. DELETE /receivers/:id
+
+Response:	200K
+{
+  "n": 1,
+  "ok": 1
+}
+
+
+
+9. POST /layouts/
+
+Request Body:
+{
+	"name": "plan 1",
+	"imageLocation": "/public/img/plan.png",
+	"height": 731,
+	"width": 697
+}
+
+Response Body:
+[
+  {
+    "_id": "58d031333e7929344cbdc158",
+    "name": "plan 1",
+    "imageLocation": "/public/img/plan.png",
+    "height": 69,
+    "width": 73,
+    "layoutId": "H1o4Wh6ig",				//Note down this ID 
+    "createdAt": 1490039091386,
+    "updatedAt": 1490039091386,
+    "__v": 0
+  }
+]
+
+
+10. GET /layouts/
+Response Body:
+[
+  {
+    "_id": "58d031333e7929344cbdc158",
+    "name": "plan 1",
+    "imageLocation": "/public/img/plan.png",
+    "height": 69,
+    "width": 73,
+    "layoutId": "H1o4Wh6ig",
+    "createdAt": 1490039091386,
+    "updatedAt": 1490039091386,
+    "__v": 0
+  }
+]
+
+
+11. POST /layout_chunks/
+
+Request Body:
+{
+	"name": "zone-1",
+	"type": "zone",
+	"layoutId": "H1o4Wh6ig",		//The layoutId which is Noted down above
+	"area":"A34:BU69"
+}
+
+or 
+
+{
+	"name": "dept-1",
+	"type": "department",
+	"layoutId": "H1o4Wh6ig",             //The layoutId which is Noted down above
+	"area":"A34:BU69"
+}
+
+Response Body:
+{
+  "__v": 0,
+  "layoutPartId": "ryFvLo6ig",
+  "createdAt": 1490036321212,
+  "updatedAt": 1490036321212,
+  "layoutId": "rJh9Ei6jg",
+  "name": "dept-2",
+  "type": "department",
+  "_id": "58d02661b3322826a6b0b344",
+  "area": [
+    [
+      "AK1",
+      "AL1",
+      ......
+    ]
+   ]
+}
+
+
+12. GET /layout_chunks/
+
+Response:
+
+[
+  {
+    "_id": "58cbde98f2edbb0b00549a4f",
+    "layoutPartId": "HkbiCItol",
+    "createdAt": 1489755800930,
+    "updatedAt": 1489755800930,
+    "layoutName": "iTraceLayout",
+    "name": "zone 1",
+    "type": "zone",
+    "__v": 0,
+    "area": [
+      [
+        "A1",
+        "B1",
+        "C1",
+        "D1"
+      ],
+      [
+        "A2",
+        "B2",
+        "C2",
+        "D2"
+      ],
+      [
+        "A3",
+        "B3",
+        "C3",
+        "D3"
+      ],
+      [
+        "A4",
+        "B4",
+        "C4"
+      ],
+      [
+        "A5",
+        "B5",
+        "C5",
+        "D5",
+        "E5"
+      ],
+      [
+        "A6",
+        "B6",
+        "C6",
+        "D6",
+        "E6"
+      ]
+    ]
+  },
+  {
+    "_id": "58cbdeb1f2edbb0b00549a50",
+    "layoutPartId": "ryYnAIKog",
+    "createdAt": 1489755825121,
+    "updatedAt": 1489755825121,
+    "layoutName": "iTraceLayout",
+    "name": "zone 2",
+    "type": "zone",
+    "__v": 0,
+    "area": [
+      [
+        "F1",
+        "G1"
+      ],
+      [
+        "F2",
+        "G2"
+      ]
+    ]
+  }
+]
+
+13. POST /gate_entries/
+
+Request Body:
+
+{
+	"auid": "EEEE",
+	"gateId":"gate-1",
+	"state":"out"
+}
+
+Response:
+
+{
+  "__v": 0,
+  "auid": "EEEE",
+  "gateId": "gate-1",
+  "state": "out",
+  "gateEntryId": "HkbZHsAsx",
+  "createdAt": 1490101496651,
+  "updatedAt": 1490101496651,
+  "_id": "58d124f8c841b52d13dd0679"
+}
+
+14. GET /gate_entries/
+
+[
+  {
+    "_id": "58d12306c841b52d13dd066e",
+    "auid": "XXXX",
+    "gateId": "gate-1",
+    "state": "in",
+    "gateEntryId": "Hy1MQoRjl",
+    "createdAt": 1490100998859,
+    "updatedAt": 1490100998859,
+    "__v": 0
+  },
+  {
+    "_id": "58d12498c841b52d13dd066f",
+    "auid": "YYYY",
+    "gateId": "gate-1",
+    "state": "in",
+    "gateEntryId": "HJ-jEs0ix",
+    "createdAt": 1490101400710,
+    "updatedAt": 1490101400710,
+    "__v": 0
+  }
+]
