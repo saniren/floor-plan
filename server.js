@@ -105,6 +105,8 @@ app.delete('/tasks/:id',  tagController.deleteTask);
 app.post('/layout_chunks',  layoutController.addLayoutPart);
 app.get('/layout_chunks',  layoutController.getLayoutPart);
 app.get('/layout_chunks/:id',  layoutController.getLayoutChunksById);
+app.put('/layout_chunks/:id',  layoutController.updateLayoutChunkById);
+app.delete('/layout_chunks/:id',  layoutController.deleteLayoutChunkById);
 
 app.post('/layouts',  layoutController.addLayout);
 app.get('/layouts',  layoutController.getLayout);

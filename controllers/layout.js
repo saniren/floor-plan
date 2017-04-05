@@ -44,6 +44,46 @@ var addLayoutPartImpl = function(data){
 
 	return deferred.promise;
 }
+
+//Controller to update layout part
+exports.updateLayoutChunkById = function(req, res){
+	updateLayoutChunkImpl(req.body, req.param('id')).then(
+		function(result){
+			res.json(result);
+		}, function(error) {
+			res.status(404);
+			res.json(error);
+		}
+	);
+}
+//update layout part implementation
+var updateLayoutChunkImpl = function(data, layoutChunkId){
+	var deferred = q.defer();
+	var layoutPart = {};
+
+	layoutPart.updatedAt = (new Date()).getTime();
+	var tempArea = data.area.split(","),
+		tempMicroGrid = [];
+	tempArea.forEach(function(range){
+		var microGrids = getMicroGridRange(range)
+		tempMicroGrid = tempMicroGrid.concat(microGrids);
+	});
+	layoutPart.area = tempMicroGrid;
+	layoutPart.layoutId = data.layoutId;
+	layoutPart.name = data.name;
+	layoutPart.type = data.type;
+
+	schema.mongoUpdate(schema.layoutPartModel, {layoutPartId:layoutChunkId}, layoutPart).then(
+		function(result){
+			deferred.resolve(result);
+		}, function(error) {
+			deferred.reject(error);
+		}
+	)
+
+	return deferred.promise;
+}
+
 //Controller to get layout part
 exports.getLayoutPart = function(req, res){
 	getLayoutPartImpl().then(
@@ -233,7 +273,7 @@ var getLayoutImpl = function(){var deferred = q.defer();
 exports.deleteLayout = function(req, res){
 	deleteLayoutImpl(req.param('id')).then(
 		function(result){
-			res.json(result);
+			res.status(204).send();
 		}, function(error) {
 			res.status(404);
 			res.json(error);
@@ -253,3 +293,30 @@ var deleteLayoutImpl = function(layoutId){
 	);
 	return deferred.promise;
 }
+
+//Controller to delete layout chunk
+exports.deleteLayoutChunkById = function(req, res){
+	deleteLayoutChunkImpl(req.param('id')).then(
+		function(result){
+			res.status(204).send();
+		}, function(error) {
+			res.status(404);
+			res.json(error);
+		}
+	);
+}
+
+//delete given layout chunk
+var deleteLayoutChunkImpl = function(layoutChunkId){
+	var deferred = q.defer();
+	schema.mongoRemove(schema.layoutPartModel, {layoutPartId: layoutChunkId}).then(
+		function(result){
+			deferred.resolve(result);
+		}, function(error) {
+			deferred.reject(error);
+		}
+	);
+	return deferred.promise;
+}
+
+

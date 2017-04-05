@@ -374,6 +374,8 @@ Response:
 
 14. GET /gate_entries/
 
+Response:
+
 [
   {
     "_id": "58d12306c841b52d13dd066e",
@@ -396,3 +398,30 @@ Response:
     "__v": 0
   }
 ]
+
+15. PUT /layout_chunks/rJZyLoTig
+
+Request Body:
+
+{
+  "name": "store-1.1",
+  "type": "zone",
+  "layoutId": "rJh9Ei6jg",
+  "area":"A1:AJ34"
+}
+
+Response Body:
+
+{
+  "n": 1,
+  "nModified": 1,
+  "ok": 1
+}
+
+16. DELETE /layout_chunks/rJZyLoTig
+
+Response Status: 204
+
+Response Body:
+
+No Content
