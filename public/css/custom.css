@@ -4,4 +4,9 @@
 .no-border {
 	border: 0px !important;
 }
-
+.w-60{
+	width: 60%;
+}
+.w-40{
+	width: 40%;
+}

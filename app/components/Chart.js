@@ -12,7 +12,7 @@ var self;
 class Chart extends React.Component {
 	constructor(props) {
 	    super(props);
-	    this.state = { asid: "", activeTagInChunk: [], gateEntries: []};
+	    this.state = { asid: "", activeTagInChunk: [], gateEntries: [], layout:{}};
 		self = this;
 		self.activeTags=[];
 		self.layout = {};
@@ -71,9 +71,12 @@ class Chart extends React.Component {
 	}
 
 	setUpdatedData(activeTags) {
+		var self = this;
 		try {
 			// self.setState({data: activeTags});
 			this.activeTags=activeTags;
+			// Set layout details
+			this.setState({ layout: {name: this.layout.name, count: activeTags.length}})
 	    	// calculateZoneOfHistoryDate(activeTags, this.props.zoneData, this.props.gridData.cellWidth, this.props.gridData.cellHeight);
 	    	//group tags by auid 
 	    	var groupedByAuid = _.groupBy(activeTags, function(tag){return tag.auid;});
@@ -91,7 +94,7 @@ class Chart extends React.Component {
 	    	var groupedTagByZone= _.groupBy(uniqTagList, function(tag){return tag.layoutChunkId.zone;});
 	    	var groupedTagByDept= _.groupBy(uniqTagList, function(tag){return tag.layoutChunkId.zone&&tag.layoutChunkId.department&&tag.layoutChunkId.department;});
 	    	var groupedTagByChunk = Object.assign(groupedTagByDept, groupedTagByZone);
-	    	var chunkCount = [];
+
 			for (var dept in groupedTagByChunk) {
 				if(dept !== "" && dept !== "undefined"){
 			    	var currentGroup = groupedTagByChunk[dept][0];
@@ -99,14 +102,40 @@ class Chart extends React.Component {
 					 currentChunk&&(currentChunk.count = groupedTagByChunk[dept].length);
 				}
 			}
-			this.setState({ activeTagInChunk: this.layoutChunks});
+
+	    	//format chunk
+	    	var groupedChunkByType= _.groupBy(this.layoutChunks, function(chunk){return chunk.type;});
+	    	groupedChunkByType["department"].map(function(dept){
+	    		dept.zone = [];
+	    		groupedChunkByType["zone"].map(function(zone){
+	    			if(zone.area !== [])
+	    				zone.area.every(function(microGridRow){
+	    					return self.isMicroGridPresent(microGridRow[0], dept.area) && self.isMicroGridPresent(microGridRow[microGridRow.length-1], dept.area);
+	    				})&&dept.zone.push(zone);
+	    		});
+	    	});
+	    	var tempDept = groupedChunkByType["department"];
+	    	var chunkCount = [];
+
+			this.setState({ activeTagInChunk: tempDept});
 			this.dispatcher.updateTagsOfZone(groupedTagByChunk);
 		}catch(err) {
 			console.log("Thrown error: "+err.message);
 		}
 	}
 
+	isMicroGridPresent(microGrid, area){
+		var arr = area.filter( function(row) {
+		    return !!~row.indexOf( microGrid );
+		});
+		return arr.length !== 0;
+	}
+
 	componentDidUpdate(){
+		$('.collapse').on('show.bs.collapse', function () {
+			$('.collapse.in').collapse('hide');
+		});
+
 		// if(this.props.data.length !== 0){
 		// 	this.activeTags.push(this.props.data[0]);
 		// 	this.setUpdatedData(this.activeTags);
@@ -138,7 +167,7 @@ class Chart extends React.Component {
 
 	udpateLayoutViewByChunk(data, dis, event){
 		if(data.type !== 'zone'){
-			if(self.lastClicked !== data.layoutPartId){
+			if(self.lastClicked !== data.layoutPartId && data.type !== undefined){
 
 				this.dispatcher.updateViewPort(
 					data.zoneInPx.chunkStartsAtXInPx, 
@@ -152,21 +181,50 @@ class Chart extends React.Component {
 			} else {
 				this.dispatcher.updateViewPort(0, 0, this.layout.width, this.layout.height, this.layout.layoutId);
 				self.lastClicked = undefined;
-				self.dispatcher.updateLabelVisibility('department', 'zone')
+				self.dispatcher.updateLabelVisibility('department', 'zone');
+				$('.collapse.in').collapse('hide');
 			}
 		}
 	}
 
 	render() {
-	    var rows = [];
+	    var deptRows = [];
 	    var self = this;
-	    this.state.activeTagInChunk.forEach(function(chunk){
-			rows.push(
-				<tr onClick={self.udpateLayoutViewByChunk.bind(self, chunk)}>
-					<td>{chunk.name}</td>
-					<td>{chunk.count?chunk.count:0}</td>
+	    deptRows.push(
+			<tr onClick={self.udpateLayoutViewByChunk.bind(self, this.state.layout)}>
+				<td className="w-60">{this.state.layout.name}</td>
+				<td className="w-40">{this.state.layout.count}</td>
+			</tr>
+		);
+	    this.state.activeTagInChunk.forEach(function(dept){
+			deptRows.push(
+				<tr className="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href={'#collapse_'+dept.layoutPartId} onClick={self.udpateLayoutViewByChunk.bind(self, dept)}>
+					<td className="w-60">{dept.name}</td>
+					<td className="w-40">{dept.count?dept.count:0}</td>
 				</tr>
 			);
+			if(dept.zone.length !== 0){
+				var zoneRow = [];
+				dept.zone.forEach(function(zone){
+					zoneRow.push(
+						<tr>
+							<td className="w-60">{zone.name}</td>
+							<td className="w-40">{zone.count?zone.count:0}</td>
+						</tr>
+					);
+				});
+				deptRows.push(
+					<tr className="collapse" id={'collapse_'+dept.layoutPartId}>
+						<td colSpan="2" className="p-n">
+							<table className="table table-bordered m-n">
+								<tbody className="bg-light dker">
+									{zoneRow}
+								</tbody>
+							</table>
+						</td>
+					</tr>
+				)
+			}
     	});
 
 		var gateEntries = [];
@@ -194,6 +252,7 @@ class Chart extends React.Component {
 				</tr>
 			);
     	});
+
 		return (
 			<div className="app-content">
 			    <div className="app-content-body app-content-full">
@@ -238,7 +297,7 @@ class Chart extends React.Component {
 			                                                                <th>Count</th>
 			                                                            </tr>
 			                                                        </thead>
-			                                                        <tbody>{rows}</tbody>
+			                                                        <tbody>{deptRows}</tbody>
 
 			                                                    </table>
 			                                                </div>
