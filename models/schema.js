@@ -159,6 +159,14 @@ var taskSchema = new mongoose.Schema({
     active: {
         type: String,
         required: true
+    },
+    createdAt:{
+        type: Number,
+        required: true
+    },
+    updatedAt:{
+        type: Number,
+        required: true
     }
 });
 taskSchema.index({
@@ -350,9 +358,9 @@ exports.mongoInsert = function(Model, data) {
     return deferred.promise;
 };
 
-exports.mongoFindOne = function(model, record, dataToSelect) {
+exports.mongoFindOne = function(model, record, dataToSelect, options) {
     var deferred = q.defer();
-    model.findOne(record, dataToSelect, function(error, results) {
+    model.findOne(record, dataToSelect, options, function(error, results) {
         if (error) {
             deferred.reject({
                 status: "Error",

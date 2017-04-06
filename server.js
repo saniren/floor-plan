@@ -101,6 +101,7 @@ app.delete('/receivers/:id',  receiverController.deleteReceiver);
 app.post('/tasks',  tagController.addTask);
 app.get('/tasks',  tagController.getTasks);
 app.delete('/tasks/:id',  tagController.deleteTask);
+app.get('/tags/:id',  tagController.getTagById);
 
 app.post('/layout_chunks',  layoutController.addLayoutPart);
 app.get('/layout_chunks',  layoutController.getLayoutPart);

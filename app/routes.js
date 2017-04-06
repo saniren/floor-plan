@@ -5,6 +5,8 @@ import Chart from './components/Chart';
 import Grid from './components/Grid';
 import History from './components/History';
 import ManageTags from './components/ManageTags';
+import ListTags from './components/ListTags';
+import EditTag from './components/EditTag';
 import NotFound from './components/NotFound';
 
 export default function getRoutes(store) {
@@ -19,6 +21,10 @@ export default function getRoutes(store) {
       <Route path="/grid" component={Grid} />
       <Route path="/history" component={History} />
       <Route path="/tag" component={ManageTags} />
+      <Route path="/list" component={ListTags} />
+      <Route path="/add" component={ManageTags} />
+      <Route path="/edit" component={EditTag} />
+      <Route path="/delete" component={ManageTags} />
       <Route path="*" component={NotFound} onLeave={clearMessages}/>
     </Route>
   );

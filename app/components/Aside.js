@@ -7,11 +7,25 @@ class Aside extends React.Component {
   
   updateActiveClass(event){
     $("li").removeClass("active");
-    $(event.currentTarget).addClass("active");
+    $(event.target).closest("li").addClass("active");
   }
   
   componentDidMount() { 
-    $("#"+(window.location.pathname.split("/")[1]||"root")).addClass("active");
+    debugger
+    // $("#"+(window.location.pathname.split("/")[1]||"root")).addClass("active");
+
+    // $(document).on('click', '[ui-nav] a', function (e) {
+    //   var $this = $(e.target), $active;
+    //   $this.is('a') || ($this = $this.closest('a'));
+
+    //   $active = $this.parent().siblings( ".active" );
+    //   $active && $active.toggleClass('active').find('> ul:visible').slideUp(200);
+
+    //   ($this.parent().hasClass('active') && $this.next().slideUp(200)) || $this.next().slideDown(200);
+    //   $this.parent().toggleClass('active');
+
+    //   $this.next().is('ul') && e.preventDefault();
+    // });
   }
 
   render() {
@@ -44,6 +58,12 @@ class Aside extends React.Component {
                       <i className="fa fa-tags icon"></i>
                       <span>Manage Tags</span>
                     </Link>
+                    <ul className="nav nav-sub dk">
+                      <li id="list"><Link to="/list"><span>List</span></Link></li>
+                      <li id="edit"><Link to="/edit"><span>Edit</span></Link></li>
+                      <li id="add"><Link to="/add"><span>Add</span></Link></li>
+                      <li id="delete"><Link to="/delete"><span>Remove</span></Link></li>     
+                    </ul>
                   </li>
 
                   <li id="grid" onClick={this.updateActiveClass.bind(this)}>
